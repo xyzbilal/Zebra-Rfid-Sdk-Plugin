@@ -5,9 +5,9 @@ import 'package:zebra_rfid_sdk_plugin/zebra_event_handler.dart';
 
 class ZebraRfidSdkPlugin {
   static const MethodChannel _channel =
-      MethodChannel('com.example.zebra_rfid_sdk_plugin/plugin');
+  MethodChannel('com.example.zebra_rfid_sdk_plugin/plugin');
   static const EventChannel _eventChannel =
-      EventChannel('com.example.zebra_rfid_sdk_plugin/event_channel');
+  EventChannel('com.example.zebra_rfid_sdk_plugin/event_channel');
   static ZebraEngineEventHandler? _handler;
 
   static Future<String?> get platformVersion async {
@@ -37,6 +37,51 @@ class ZebraRfidSdkPlugin {
       return result;
     } catch (e) {
       var a = e;
+    }
+  }
+
+  // Java tarafındaki AutoConnectDevice metodunu Flutter'dan çağırmak için:
+  static Future<List<dynamic>> autoConnectDevice() async {
+    try {
+      final result = await _channel.invokeMethod('AutoConnectDevice');
+      // result, Java tarafındaki result.success(deviceList) ile gelen data
+      // tipik olarak List<Map<String, dynamic>> ama dynamic olarak gelecek, parse edeceğiz
+      return result;
+    } on PlatformException catch (e) {
+      // Hata varsa handle edebilirsiniz
+      print('Hata: ${e.message}');
+      return [];
+    }
+  }
+
+  static Future<Map<Object?, Object?>> getReaderList() async {
+    try {
+      final result = await _channel.invokeMethod('getReadersList');
+      // result, Java tarafındaki result.success(deviceList) ile gelen data
+      // tipik olarak List<Map<String, dynamic>> ama dynamic olarak gelecek, parse edeceğiz
+      return result;
+    } on PlatformException catch (e) {
+      // Hata varsa handle edebilirsiniz
+      print('Hata: ${e.message}');
+      return {};
+    }
+  }
+
+  static Future<int> getMaxPower() async {
+    try {
+      final int result = await _channel.invokeMethod('getMaxPower');
+      return result;
+    } catch (e) {
+      print('Error getting max power: $e');
+      return 0;
+    }
+  }
+
+  static Future<void> setMaxPower(int power) async {
+    try {
+      await _channel.invokeMethod('setMaxPower', {'power': power});
+    } catch (e) {
+      print('Error setting max power: $e');
     }
   }
 
