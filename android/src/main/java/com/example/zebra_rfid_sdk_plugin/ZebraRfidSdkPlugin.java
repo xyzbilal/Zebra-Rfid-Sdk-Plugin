@@ -58,7 +58,7 @@ public class ZebraRfidSdkPlugin implements FlutterPlugin, MethodCallHandler, Str
         rfidHandler.connect(result);
         break;
       case "getReadersList":
-        rfidHandler.getReadersList();
+        result.success(rfidHandler.getReadersList());
         break;
 
       case "disconnect":
@@ -68,6 +68,20 @@ public class ZebraRfidSdkPlugin implements FlutterPlugin, MethodCallHandler, Str
       case "write":
 
         break;
+      case "AutoConnectDevice":
+        rfidHandler.connect(result);
+        break;
+      case "getMaxPower":
+        result.success(rfidHandler.getMaxPower());
+        break;
+            
+      case "setMaxPower":
+        int power = call.argument("power");
+        rfidHandler.setMaxPower(power);
+        result.success(null);
+        break;
+
+
       default:
         result.notImplemented();
     }
@@ -92,6 +106,9 @@ public class ZebraRfidSdkPlugin implements FlutterPlugin, MethodCallHandler, Str
     Log.w(TAG, "cancelling listener");
     sink = null;
   }
+
+
+
 
 
 
