@@ -67,6 +67,15 @@ public class ZebraRfidSdkPlugin implements FlutterPlugin, MethodCallHandler, Str
         break;
       case "write":
 
+          String targetEpc = call.argument("targetEPc");
+           String newEpc = call.argument("newEPc");
+       boolean result = rfidHandler.writeEpcToTag(targetEpc, newEpc);
+            if(result) {
+               result.success(true);
+            } else {
+               result.error("error while writing epc");
+            }
+
         break;
       case "AutoConnectDevice":
         rfidHandler.connect(result);
