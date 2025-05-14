@@ -229,6 +229,39 @@ public class RFIDHandler implements Readers.RFIDReaderEventHandler {
 
     }
 
+
+
+    public boolean writeEpcToTag(String targetEpc, String newEpc) {
+    if (!isReaderConnected()) {
+        Log.e(TAG, "RFID Reader not connected.");
+        return false;
+    }
+
+    try {
+        // EPC yazımı için filtre oluşturuluyor
+        TagFilter filter = new TagFilter();
+        filter.setMemoryBank(MEMORY_BANK.MEMORY_BANK_EPC);
+        filter.setTagPattern(targetEpc);
+        filter.setBitOffset(32); // EPC belleği başlangıç offset’i
+        filter.setTagPatternBitCount(targetEpc.length() * 4); // 1 hex karakter = 4 bit
+        filter.setFilterMatch(true); // Eşleşen etiketleri seç
+
+        // Yazılacak yeni EPC verisi
+        TagData tagData = new TagData(newEpc);
+
+        // EPC yazım işlemi
+        reader.Actions.TagAccess.writeWait(tagData, MEMORY_BANK.MEMORY_BANK_EPC, 2, 0, filter);
+
+        Log.i(TAG, "Yeni EPC başarıyla yazıldı: " + newEpc);
+        return true;
+
+    } catch (InvalidUsageException | OperationFailureException e) {
+        Log.e(TAG, "EPC yazım hatası: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+    }
+}
+
     private boolean isReaderConnected() {
         if (reader != null && reader.isConnected())
             return true;
